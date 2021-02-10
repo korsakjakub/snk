@@ -12,3 +12,8 @@ or run with
 ```
 go run ./...
 ```
+or test with
+
+```
+go test -v ./...
+```
