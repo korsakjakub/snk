@@ -7,13 +7,24 @@ import (
 	"unicode/utf8"
 )
 
+var conf Config
+
 func main() {
-	snake := actor{s: shape{{x: 0, y: 0},{x : 1, y: 0}, {x:2, y:0}}, r: '#'}
+
+	conf = loadConfig("..")
+	snake := actor{s: shape{{x: 0, y: 0}, {x: 1, y: 0}, {x: 2, y: 0}}, r: '#'}
 	fruit := actor{s: shape{{x: 0, y: 1}}, r: '*'}
-	s := screen{}
-	_ = s.drawScreen(snake,fruit)
+	if conf.Width*conf.Height == 0 {
+		return
+	}
+	s := screen{
+		s:      nil,
+		width:  conf.Width,
+		height: conf.Height,
+	}
+	_ = s.drawScreen(snake, fruit)
 	points := 0
-	game := game{snake: snake,fruit: fruit,screen: s,points: points}
+	game := game{snake: snake, fruit: fruit, screen: s, points: points}
 	move := zero
 
 	for {
@@ -35,22 +46,38 @@ func main() {
 	}
 }
 
-
 func getChar() rune {
 	// disable input buffering
-	exec.Command("stty", "-F", "/dev/tty", "cbreak", "min", "1").Run()
+	err := exec.Command("stty", "-F", "/dev/tty", "cbreak", "min", "1").Run()
+	if err != nil {
+		return 0
+	}
 	// do not display entered characters on the screen
-	exec.Command("stty", "-F", "/dev/tty", "-echo").Run()
+	err = exec.Command("stty", "-F", "/dev/tty", "-echo").Run()
+	if err != nil {
+		return 0
+	}
 	// restore the echoing state when exiting
-	defer exec.Command("stty", "-F", "/dev/tty", "echo").Run()
+	defer func(command *exec.Cmd) {
+		err := command.Run()
+		if err != nil {
+
+		}
+	}(exec.Command("stty", "-F", "/dev/tty", "echo"))
 
 	b := make([]byte, 1)
-	os.Stdin.Read(b)
+	_, err = os.Stdin.Read(b)
+	if err != nil {
+		return 0
+	}
 	r, _ := utf8.DecodeRune(b)
 	return r
 }
 func clearCommand() {
 	cmd := exec.Command("clear")
 	cmd.Stdout = os.Stdout
-	cmd.Run()
+	err := cmd.Run()
+	if err != nil {
+		return
+	}
 }

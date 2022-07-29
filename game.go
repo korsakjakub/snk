@@ -57,8 +57,8 @@ func (g game) generateNewCoords() coord {
 	c := coord{}
 	for {
 		i += 1
-		c = coord{x : rand.Int() % g.screen.getWidth(), y: rand.Int() % g.screen.getHeight()}
-		if !g.snake.s.contains(c) || i == g.screen.getWidth() * g.screen.getHeight() {
+		c = coord{x: rand.Int() % g.screen.width, y: rand.Int() % g.screen.height}
+		if !g.snake.s.contains(c) || i == g.screen.width*g.screen.height {
 			break
 		}
 	}
