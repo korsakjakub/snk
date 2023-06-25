@@ -1,4 +1,6 @@
 # snk
+[![Go Report Card](https://goreportcard.com/badge/github.com/korsakjakub/snk)](https://goreportcard.com/report/github.com/korsakjakub/snk)
+
 simple snake game written on a train
 
 build simply with
